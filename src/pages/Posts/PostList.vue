@@ -3,6 +3,10 @@
     <h1>我的部落格</h1>
 
     <!-- 簡單列表先不管樣式 -->
+    <div class="navgation-bar">
+      <button>首頁</button>
+      <button>新增文章</button>
+    </div>
     <div v-for="post in posts" :key="post.id">
       <div class="title">
         <router-link :to="'/post/' + post.id"> {{ post.title }}</router-link>
