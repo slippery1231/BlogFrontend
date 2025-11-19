@@ -1,13 +1,16 @@
-@import 'tailwindcss';
 @import './base.css';
+@import 'tailwindcss';
 
+/* 基礎樣式 - 適用所有裝置 */
 #app {
-  max-width: 1280px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
   font-weight: normal;
 }
 
+/* 連結樣式 */
 a,
 .green {
   text-decoration: none;
@@ -22,15 +25,26 @@ a,
   }
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
+/* 平板尺寸 (768px+) */
+@media (min-width: 768px) {
   #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+    max-width: 768px;
+    padding: 1.5rem;
+  }
+}
+
+/* 桌面尺寸 (1024px+) */
+@media (min-width: 1024px) {
+  #app {
+    max-width: 1024px;
+    padding: 2rem;
+  }
+}
+
+/* 大螢幕 (1280px+) */
+@media (min-width: 1280px) {
+  #app {
+    max-width: 1280px;
+    padding: 2rem 3rem;
   }
 }

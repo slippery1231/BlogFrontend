@@ -1,17 +1,21 @@
 <template>
-  <div v-if="post">
-    <div class="title" style="display: flex; align-items: center;">
-      <h1>{{ post.title }}</h1>
-      <p>發布時間: {{ post.created_time }}</p>
+  <div id="container" class="mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl" v-if="post">
+    <div id="title" class="flex align-items-center mb-5">
+      <h1 class="text-5xl">{{ post.title }}</h1>
     </div>
-    <div class="body">
+    <div id="body" class="mb-5">
       {{ post.body }}
     </div>
 
     <!-- 之後再加登入判斷 -->
-    <button @click="editPost">編輯</button>
-    <button @click="deletePost">刪除</button>
-    <button @click="archivePost">隱藏</button>
+    <div>
+      <button @click="editPost" class="bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold me-5">編輯</button>
+      <button @click="deletePost" class="bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold me-5">刪除</button>
+      <button @click="archivePost" class="bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold me-5">隱藏</button>
+    </div>
+    <div id="publish-time" class="flex content-end">
+      <p>發布時間: {{ post.created_time }}</p>
+    </div>
   </div>
 </template>
 
@@ -30,8 +34,13 @@ onMounted(async () => {
   post.value = result.data
 })
 
-const archivePost = () => {
-  router.push('/')
+const archivePost = async () => {
+  if (confirm('確定典藏?')) {
+    await fetch(`http://localhost:5104/api/posts/${route.params.id}`, {
+      method: 'PATCH'
+    })
+    await router.push('/')
+  }
 }
 
 const editPost = () => {
@@ -43,7 +52,7 @@ const deletePost = async () => {
     await fetch(`http://localhost:5104/api/posts/${route.params.id}`, {
       method: 'DELETE'
     })
-    router.push('/')
+    await router.push('/')
   }
 }
 </script>

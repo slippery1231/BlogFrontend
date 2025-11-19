@@ -1,18 +1,26 @@
 <template>
-  <div>
-    <h1>新增文章</h1>
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+    <h1 class="text-2xl md:text-3xl mb-6">新增文章</h1>
 
-    <input v-model="title" placeholder="標題">
-    <textarea v-model="content" rows="20" placeholder="內容"></textarea>
+    <input v-model="title"
+           class="w-full px-4 py-2 mb-4"
+           placeholder="標題">
+    <textarea v-model="content"
+              class="w-full px-4 py-2 mb-4"
+              rows="20"
+              placeholder="內容"></textarea>
 
-    <button @click="save">儲存</button>
-    <button @click="$router.push('/')">取消</button>
+    <div class="flex gap-4">
+      <button @click="save" class="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold me-5">儲存</button>
+      <button @click="$router.push('/')" class="bg-gray-500 text-white px-4 py-2 rounded-lg font-semibold me-5">取消</button>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import {ref} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
+
 const router = useRouter()
 
 const title = ref('')
@@ -23,8 +31,8 @@ const save = async () => {
 
   await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title: title.value, content: content.value })
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({title: title.value, content: content.value})
   })
 
   router.push('/')
