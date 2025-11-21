@@ -1,23 +1,38 @@
 <template>
-  <div id="container" class="mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl" v-if="post">
-    <div id="title" class="flex align-items-center mb-5">
-      <h1 class="text-5xl">{{ post.title }}</h1>
-    </div>
-    <div id="body" class="mb-5">
-      {{ post.body }}
+  <div id="container" class="mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl py-8" v-if="post">
+    <!-- 文章標題 -->
+    <div id="title" class="mb-4">
+      <h1 class="text-5xl font-bold">{{ post.title }}</h1>
     </div>
 
-    <!-- 之後再加登入判斷 -->
-    <div>
-      <button @click="editPost" class="bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold me-5">編輯</button>
-      <button @click="deletePost" class="bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold me-5">刪除</button>
-      <button @click="archivePost" class="bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold me-5">隱藏</button>
-    </div>
-    <div id="publish-time" class="flex content-end">
+    <!-- 發布時間 -->
+    <div id="publish-time" class="mb-8 text-gray-400 text-sm">
       <p>發布時間: {{ post.created_time }}</p>
     </div>
+
+    <!-- 文章內容區 -->
+    <div id="body" class="mb-12 min-h-[200px] whitespace-pre-wrap leading-relaxed text-lg">
+      {{ post.body }}
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam atque cum earum iusto magni, minima molestias natus perspiciatis provident quae quasi quia, quidem quo ratione similique ullam voluptate? Modi, quidem!
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam atque cum earum iusto magni, minima molestias natus perspiciatis provident quae quasi quia, quidem quo ratione similique ullam voluptate? Modi, quidem!
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam atque cum earum iusto magni, minima molestias natus perspiciatis provident quae quasi quia, quidem quo ratione similique ullam voluptate? Modi, quidem!
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam atque cum earum iusto magni, minima molestias natus perspiciatis provident quae quasi quia, quidem quo ratione similique ullam voluptate? Modi, quidem!
+    </div>
+
+    <!-- 操作按鈕 -->
+    <div class="flex gap-3 pt-8 border-t border-gray-700">
+      <button @click="editPost" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold transition">
+        編輯
+      </button>
+      <button @click="archivePost" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-semibold transition">
+        隱藏
+      </button>
+      <button @click="deletePost" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-semibold ml-auto transition">
+        刪除
+      </button>
+    </div>
   </div>
-</template>
+</template>>
 
 <script setup>
 import { ref, onMounted } from 'vue'
