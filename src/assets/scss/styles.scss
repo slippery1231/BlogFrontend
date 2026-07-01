@@ -1,0 +1,78 @@
+/* =============================================================================
+ * 潮間帶 — 全域設計 tokens 與基礎樣式
+ * 編輯風暖紙色調；深色模式由 Quasar 的 body.body--dark 切換覆蓋變數
+ * ========================================================================== */
+
+:root {
+  --paper: #f2efe6;
+  --paper-deep: #e8e2d2;
+  --card: #fbf9f2;
+  --ink: #231f2e;
+  --ink-soft: #5b5768;
+  --indigo: #35406b;
+  --indigo-deep: #232a47;
+  --rust: #b1502d;
+  --rust-deep: #7c3719;
+  --line: #dad3c1;
+
+  /* 字體家族 */
+  --font-serif: 'Fraunces', 'Noto Serif TC', serif;
+  --font-reading: 'Newsreader', 'Noto Serif TC', serif;
+  --font-sans: 'Inter', 'Microsoft JhengHei', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+/* 深色模式：夜間潮間帶 */
+body.body--dark {
+  --paper: #1a1822;
+  --paper-deep: #14121b;
+  --card: #221f2c;
+  --ink: #ede8dc;
+  --ink-soft: #a49fb0;
+  --indigo: #3d4977;
+  --indigo-deep: #1b2138;
+  --rust: #d1875f;
+  --rust-deep: #c56f45;
+  --line: #362f42;
+
+  background-color: var(--paper);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  transition:
+    background-color 0.4s ease-in-out,
+    color 0.4s ease-in-out;
+}
+
+p {
+  margin: 0;
+}
+
+/* 讓 Quasar loading / notify 也吃到主題色的過渡 */
+.q-loading,
+.q-notification {
+  font-family: var(--font-sans);
+}
+
+/* 共用容器寬度 */
+.tw-wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 48px 56px 40px;
+}
+
+@media (max-width: 720px) {
+  .tw-wrap {
+    padding: 32px 20px;
+  }
+}

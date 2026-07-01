@@ -1,0 +1,7 @@
+/*
+ * Tailwind CSS v4 — 與 Quasar 並用設定
+ * 只匯入 theme（設計 token）與 utilities，刻意略過 base(preflight) 層，
+ * 避免 Tailwind 的 CSS reset 覆蓋 Quasar 元件既有樣式。
+ */
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);

@@ -1,0 +1,26 @@
+# =============================================================================
+# Blog Frontend - 開發環境 Docker Compose 設定檔
+#
+# 使用說明：
+#   1. 建構並啟動：docker compose -f docker-compose.development.yml -p blog-frontend up -d --build
+#   2. 重新建構：  docker compose -f docker-compose.development.yml -p blog-frontend build --no-cache
+#   3. 查看狀態：  docker compose -f docker-compose.development.yml -p blog-frontend ps
+#   4. 查看日誌：  docker compose -f docker-compose.development.yml -p blog-frontend logs -f blog-frontend
+#   5. 停止服務：  docker compose -f docker-compose.development.yml -p blog-frontend down
+#
+# 服務啟動後可透過 http://localhost:8080 存取
+# =============================================================================
+
+services:
+  blog-frontend:
+    container_name: blog-frontend
+    restart: unless-stopped
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+      args:
+        BUILD_MODE: development
+    image: blog-frontend
+    ports:
+      # 主機埠號:容器埠號
+      - 8080:80

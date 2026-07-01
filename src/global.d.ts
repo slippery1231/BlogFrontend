@@ -1,0 +1,17 @@
+import type { ResponseStructure } from '@/services/axiosService'
+
+declare global {
+  /**
+   * API 錯誤型別
+   * @description 用於 catch 區塊的型別斷言，避免每次都要 import ResponseStructure
+   * @example
+   * try {
+   *   await getPosts()
+   * } catch (error) {
+   *   const errorMessage = (error as ErrorResponseStructure).errorMessage
+   * }
+   */
+  type ErrorResponseStructure = ResponseStructure<null>
+}
+
+export {}
