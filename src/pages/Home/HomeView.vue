@@ -1,38 +1,3 @@
-<script setup lang="ts">
-import { computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-import { usePostList } from '@/pages/Posts/composables/usePostList'
-import { usePostFormat } from '@/pages/Posts/composables/usePostFormat'
-import { useDateTimeFormatter } from '@/composables/useDateTimeFormatter'
-
-const router = useRouter()
-const { t } = useI18n()
-const { posts, loading, error, load } = usePostList()
-const { excerpt, readingTime, initial } = usePostFormat()
-const { formatDateTime } = useDateTimeFormatter()
-
-const featured = computed(() => posts.value[0] ?? null)
-const rest = computed(() => posts.value.slice(1))
-
-/** 由文章分類彙整熱門標籤 */
-const popularTags = computed(() => {
-  const set = new Set<string>()
-  posts.value.forEach((p) => p.category && set.add(p.category))
-  return [...set]
-})
-
-function fmtDate(value?: string | null) {
-  return formatDateTime(value, 'YYYY年M月D日')
-}
-
-function goDetail(id: string | number) {
-  router.push({ name: 'postDetail', params: { id } })
-}
-
-onMounted(load)
-</script>
-
 <template>
   <main class="tw-wrap">
     <!-- 期數 / 標語 -->
@@ -127,6 +92,45 @@ onMounted(load)
     </template>
   </main>
 </template>
+
+<script setup lang="ts">
+import { computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { useDateTimeFormatter } from '@/composables/useDateTimeFormatter'
+import { usePostList } from '@/pages/Posts/composables/usePostList'
+import { usePostFormat } from '@/pages/Posts/composables/usePostFormat'
+
+// ==================== composables ====================
+const router = useRouter()
+const { t } = useI18n() // t為官方慣例寫法,代表 "translate"
+const { posts, loading, error, load } = usePostList()
+const { excerpt, readingTime, initial } = usePostFormat()
+const { formatDateTime } = useDateTimeFormatter()
+
+// ==================== computed ====================
+const featured = computed(() => posts.value[0] ?? null)
+const rest = computed(() => posts.value.slice(1))
+
+/** 由文章分類彙整熱門標籤 */
+const popularTags = computed(() => {
+  const set = new Set<string>()
+  posts.value.forEach((p) => p.category && set.add(p.category))
+  return [...set]
+})
+
+// ==================== function ====================
+function fmtDate(value?: string | null) {
+  return formatDateTime(value, 'YYYY年M月D日')
+}
+
+function goDetail(id: string | number) {
+  router.push({ name: 'postDetail', params: { id } })
+}
+
+// ==================== life cycle ====================
+onMounted(load)
+</script>
 
 <style scoped>
 .state {

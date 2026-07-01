@@ -1,5 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { postRoutes } from '@/router/post.routes'
+import { authRoutes } from '@/router/auth.routes'
 
 /**
  * 路由配置主檔案
@@ -38,4 +39,4 @@ export const mainRoutes: RouteRecordRaw[] = [
   },
 ]
 
-export const allRoutes: RouteRecordRaw[] = [...mainRoutes, catchAllRoute]
+export const allRoutes: RouteRecordRaw[] = [...mainRoutes, ...authRoutes, catchAllRoute]

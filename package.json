@@ -57,6 +57,7 @@
     "vite": "^7.3.1",
     "vite-plugin-vue-devtools": "^8.0.7",
     "vitest": "4.1.8",
-    "vue-tsc": "^3.2.5"
+    "vue-tsc": "^3.2.5",
+    "vue3-google-login": "2.1.4"
   }
 }

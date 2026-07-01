@@ -2,10 +2,18 @@
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
+import { useUserStore } from '@/stores/useUser'
 
 const $q = useQuasar()
 const router = useRouter()
 const { t, locale } = useI18n()
+const userStore = useUserStore()
+
+/** 登出並回到首頁 */
+function logout() {
+  userStore.clearUser()
+  router.push({ name: 'home' })
+}
 
 /** 切換語言（繁中 ⇄ English） */
 function toggleLocale() {
@@ -52,6 +60,12 @@ function toggleDark() {
           <svg v-else viewBox="0 0 24 24" fill="none" stroke="var(--paper)" stroke-width="2" stroke-linecap="round">
             <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />
           </svg>
+        </button>
+        <button v-if="userStore.isAuthenticated" class="auth-nav-btn" @click="logout">
+          {{ t('auth.logout') }}
+        </button>
+        <button v-else class="auth-nav-btn" @click="router.push({ name: 'login' })">
+          {{ t('auth.login') }}
         </button>
         <button class="subscribe-btn">{{ t('actions.subscribeNewsletter') }}</button>
       </div>
@@ -154,6 +168,21 @@ function toggleDark() {
   font-family: var(--font-mono);
   font-size: 12px;
   letter-spacing: 0.5px;
+}
+.auth-nav-btn {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--paper);
+  background: transparent;
+  border: 1px solid rgba(242, 239, 230, 0.3);
+  padding: 7px 14px;
+  border-radius: 2px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: background-color 0.15s ease;
+}
+.auth-nav-btn:hover {
+  background: rgba(242, 239, 230, 0.12);
 }
 .subscribe-btn {
   font-family: var(--font-sans);
