@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import {
@@ -7,10 +7,28 @@ import {
   register as registerApi,
   sendVerificationEmail as sendVerificationEmailApi,
 } from '@/services/auth/authService'
-import type { LoginRequest, RegisterRequest } from '@/pages/Auth/types'
+import type { AuthResponse, LoginRequest, RegisterRequest } from '@/pages/Auth/types'
 import { useUserStore } from '@/stores/useUser'
 import { useNotify } from '@/composables/useNotify'
 import { useLogger } from '@/composables/useLogger'
+
+/** 認證動作的共用執行設定 */
+interface AuthActionOptions<T> {
+  /** 執行期間要開啟的送出狀態旗標 */
+  pending: Ref<boolean>
+  /** 實際呼叫的 API */
+  action: () => Promise<T>
+  /** DEV 模式 API 未連線時，模擬成功用的假結果 */
+  devResult: T
+  /** DEV 模擬時的警告訊息 */
+  devWarn: string
+  /** 失敗時的日誌前綴 */
+  failLog: string
+  /** 失敗時的通知訊息（無後端錯誤訊息時的 fallback） */
+  failMessage: string
+  /** 成功（或 DEV 模擬成功）後的處理：通知與導頁 */
+  onSuccess: (result: T) => Promise<void> | void
+}
 
 /**
  * 身分驗證 Composable
@@ -40,92 +58,92 @@ export function useAuth() {
     return (err as ErrorResponseStructure).errorMessage ?? (err as Error).message ?? fallback
   }
 
-  /** 登入 */
-  async function login(payload: LoginRequest) {
-    submitting.value = true
+  /** 執行認證動作：管理 pending 狀態、DEV 模擬與錯誤通知，回傳是否成功 */
+  async function runAuthAction<T>(options: AuthActionOptions<T>) {
+    options.pending.value = true
     try {
-      const { accessToken } = await loginApi(payload)
-      userStore.storageUser(accessToken)
-      notifySuccess(t('auth.loginSuccess'))
-      await router.push({ name: 'home' })
-    } catch (err) {
-      if (import.meta.env.DEV && isNetworkError(err)) {
-        logger.warn('API 無法連線，開發模式模擬登入以利預覽')
-        userStore.storageUser('dev-access-token')
-        notifySuccess(t('auth.loginSuccess'))
-        await router.push({ name: 'home' })
-        return
-      }
-      logger.error('登入失敗:', err)
-      notifyError(toMessage(err, t('auth.loginFailed')))
-    } finally {
-      submitting.value = false
-    }
-  }
-
-  /** Google 登入：將 Google 的 credential（id_token）送後端換取 accessToken */
-  async function loginWithGoogle(credential: string) {
-    submitting.value = true
-    try {
-      const { accessToken } = await loginWithGoogleApi({ credential })
-      userStore.storageUser(accessToken)
-      notifySuccess(t('auth.loginSuccess'))
-      await router.push({ name: 'home' })
-    } catch (err) {
-      if (import.meta.env.DEV && isNetworkError(err)) {
-        logger.warn('API 無法連線，開發模式模擬 Google 登入以利預覽')
-        userStore.storageUser('dev-access-token')
-        notifySuccess(t('auth.loginSuccess'))
-        await router.push({ name: 'home' })
-        return
-      }
-      logger.error('Google 登入失敗:', err)
-      notifyError(toMessage(err, t('auth.loginFailed')))
-    } finally {
-      submitting.value = false
-    }
-  }
-
-  /** 寄送註冊驗證碼郵件，回傳是否寄送成功 */
-  async function sendVerificationEmail(email: string) {
-    sendingCode.value = true
-    try {
-      await sendVerificationEmailApi({ email })
-      notifySuccess(t('auth.codeSentSuccess'))
+      const result = await options.action()
+      await options.onSuccess(result)
       return true
     } catch (err) {
       if (import.meta.env.DEV && isNetworkError(err)) {
-        logger.warn('API 無法連線，開發模式模擬寄送驗證碼以利預覽')
-        notifySuccess(t('auth.codeSentSuccess'))
+        logger.warn(options.devWarn)
+        await options.onSuccess(options.devResult)
         return true
       }
-      logger.error('寄送驗證碼失敗:', err)
-      notifyError(toMessage(err, t('auth.codeSentFailed')))
+      logger.error(options.failLog, err)
+      notifyError(toMessage(err, options.failMessage))
       return false
     } finally {
-      sendingCode.value = false
+      options.pending.value = false
     }
   }
 
+  /** 登入成功後的共同流程：儲存 token、通知、導向首頁 */
+  async function finishLogin({ accessToken }: AuthResponse) {
+    userStore.storageUser(accessToken)
+    notifySuccess(t('auth.loginSuccess'))
+    await router.push({ name: 'home' })
+  }
+
+  /** DEV 模擬登入用的假結果 */
+  const devLoginResult: AuthResponse = { accessToken: 'dev-access-token' }
+
+  /** 登入 */
+  function login(payload: LoginRequest) {
+    return runAuthAction({
+      pending: submitting,
+      action: () => loginApi(payload),
+      devResult: devLoginResult,
+      devWarn: 'API 無法連線，開發模式模擬登入以利預覽',
+      failLog: '登入失敗:',
+      failMessage: t('auth.loginFailed'),
+      onSuccess: finishLogin,
+    })
+  }
+
+  /** Google 登入：將 Google 的 credential（id_token）送後端換取 accessToken */
+  function loginWithGoogle(credential: string) {
+    return runAuthAction({
+      pending: submitting,
+      action: () => loginWithGoogleApi({ credential }),
+      devResult: devLoginResult,
+      devWarn: 'API 無法連線，開發模式模擬 Google 登入以利預覽',
+      failLog: 'Google 登入失敗:',
+      failMessage: t('auth.loginFailed'),
+      onSuccess: finishLogin,
+    })
+  }
+
+  /** 寄送註冊驗證碼郵件，回傳是否寄送成功 */
+  function sendVerificationEmail(email: string) {
+    return runAuthAction({
+      pending: sendingCode,
+      action: () => sendVerificationEmailApi({ email }),
+      devResult: { emailSent: true, expirationMinutes: 10 },
+      devWarn: 'API 無法連線，開發模式模擬寄送驗證碼以利預覽',
+      failLog: '寄送驗證碼失敗:',
+      failMessage: t('auth.codeSentFailed'),
+      onSuccess: () => {
+        notifySuccess(t('auth.codeSentSuccess'))
+      },
+    })
+  }
+
   /** 註冊，成功後導向登入頁 */
-  async function register(payload: RegisterRequest) {
-    submitting.value = true
-    try {
-      await registerApi(payload)
-      notifySuccess(t('auth.registerSuccess'))
-      await router.push({ name: 'login' })
-    } catch (err) {
-      if (import.meta.env.DEV && isNetworkError(err)) {
-        logger.warn('API 無法連線，開發模式模擬註冊以利預覽')
+  function register(payload: RegisterRequest) {
+    return runAuthAction({
+      pending: submitting,
+      action: () => registerApi(payload),
+      devResult: { id: null, createdAt: null },
+      devWarn: 'API 無法連線，開發模式模擬註冊以利預覽',
+      failLog: '註冊失敗:',
+      failMessage: t('auth.registerFailed'),
+      onSuccess: async () => {
         notifySuccess(t('auth.registerSuccess'))
         await router.push({ name: 'login' })
-        return
-      }
-      logger.error('註冊失敗:', err)
-      notifyError(toMessage(err, t('auth.registerFailed')))
-    } finally {
-      submitting.value = false
-    }
+      },
+    })
   }
 
   return { submitting, sendingCode, login, loginWithGoogle, register, sendVerificationEmail }
