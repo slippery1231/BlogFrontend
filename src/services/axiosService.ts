@@ -89,6 +89,34 @@ export interface DeletedResponse {
   record: number
 }
 
+/**
+ * API 錯誤
+ * @description 以 Error 形式攜帶統一的 ResponseStructure 內容，
+ * 讓 Promise reject 的值是真正的 Error 物件(sonar S6671)
+ */
+export class ApiError extends Error implements ResponseStructure<null> {
+  readonly result: BaseResponse<null>
+  readonly status: number
+  readonly statusText: string
+  readonly success = false
+  readonly errorMessage: string
+  readonly timestamp: number
+  readonly requestUrl?: string
+  readonly headers?: Record<string, string>
+
+  constructor(init: Omit<ResponseStructure<null>, 'success' | 'errorMessage'> & { errorMessage: string }) {
+    super(init.errorMessage)
+    this.name = 'ApiError'
+    this.result = init.result
+    this.status = init.status
+    this.statusText = init.statusText
+    this.errorMessage = init.errorMessage
+    this.timestamp = init.timestamp
+    this.requestUrl = init.requestUrl
+    this.headers = init.headers
+  }
+}
+
 // ==================== Axios 實例 ====================
 
 /** 共用的 Axios 實體包含專案預設設定 */
@@ -145,11 +173,11 @@ axiosService.interceptors.response.use(
     const responseData = error.response?.data
 
     // 檢查是否為標準的 BaseResponse 格式
-    const isBaseResponse = responseData && 'error' in responseData && 'data' in responseData
-    const backendError = isBaseResponse ? (responseData as BaseResponse<null>).error : null
+    const isBaseResponse = !!responseData && 'error' in responseData && 'data' in responseData
+    const backendError = isBaseResponse ? responseData.error : null
 
     // 處理錯誤訊息
-    const errorMessage = backendError?.message || error.message
+    const errorMessage = backendError?.message ?? error.message
 
     if (error.response) {
       switch (status) {
@@ -186,23 +214,21 @@ axiosService.interceptors.response.use(
       logger.error('請求配置錯誤:', error.message)
     }
 
-    // 建立統一的 ResponseStructure 錯誤物件
-    const errorResponse: ResponseStructure<null> = {
-      result: {
-        data: null,
-        error: backendError || { code: status, message: errorMessage },
-      },
-      status,
-      statusText: error.response?.statusText || 'Error',
-      success: false,
-      errorMessage: errorMessage,
-      timestamp: Date.now(),
-      requestUrl: error.config?.url,
-      headers: error.response?.headers as Record<string, string>,
-    }
-
-    // 拋出完整的 ResponseStructure 物件
-    return Promise.reject(errorResponse)
+    // 拋出攜帶完整 ResponseStructure 內容的 Error 物件
+    return Promise.reject(
+      new ApiError({
+        result: {
+          data: null,
+          error: backendError ?? { code: status, message: errorMessage },
+        },
+        status,
+        statusText: error.response?.statusText ?? 'Error',
+        errorMessage,
+        timestamp: Date.now(),
+        requestUrl: error.config?.url,
+        headers: error.response?.headers as Record<string, string>,
+      })
+    )
   }
 )
 
@@ -263,4 +289,4 @@ export async function requestBase<T>(config: AxiosRequestConfig): Promise<BaseRe
 }
 
 export { axiosService }
-export type { AxiosRequestConfig, AxiosResponse }
+export type { AxiosRequestConfig, AxiosResponse } from 'axios'
