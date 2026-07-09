@@ -1,41 +1,13 @@
-<script setup lang="ts">
-import { useRouter } from 'vue-router'
-import { useQuasar } from 'quasar'
-import { useI18n } from 'vue-i18n'
-import { useUserStore } from '@/stores/useUser'
-
-const $q = useQuasar()
-const router = useRouter()
-const { t, locale } = useI18n()
-const userStore = useUserStore()
-
-/** 登出並回到首頁 */
-function logout() {
-  userStore.clearUser()
-  router.push({ name: 'home' })
-}
-
-/** 切換語言（繁中 ⇄ English） */
-function toggleLocale() {
-  locale.value = locale.value === 'zh-TW' ? 'en-US' : 'zh-TW'
-}
-
-/** 深色模式切換 */
-function toggleDark() {
-  $q.dark.toggle()
-}
-</script>
-
 <template>
   <div class="site">
     <header class="top-nav">
-      <div class="brand" @click="router.push({ name: 'home' })">
+      <router-link :to="{ name: 'home' }" class="brand">
         <svg class="brand-mark" viewBox="0 0 22 22" fill="none" aria-hidden="true">
           <path d="M1 11 Q6 4 11 11 T21 11" stroke="var(--paper)" stroke-width="1.6" />
           <path d="M1 16 Q6 9 11 16 T21 16" stroke="var(--rust)" stroke-width="1.6" />
         </svg>
         <span class="brand-name">{{ t('app.title') }}</span>
-      </div>
+      </router-link>
 
       <nav class="nav-links">
         <router-link :to="{ name: 'home' }" active-class="active" exact>{{ t('nav.home') }}</router-link>
@@ -76,13 +48,41 @@ function toggleDark() {
     <footer class="site-footer">
       <span>{{ t('footer.rights') }}</span>
       <div>
-        <a href="#">{{ t('footer.about') }}</a>
-        <a href="#">{{ t('footer.privacy') }}</a>
-        <a href="#">{{ t('footer.rss') }}</a>
+        <button type="button" class="footer-link">{{ t('footer.about') }}</button>
+        <button type="button" class="footer-link">{{ t('footer.privacy') }}</button>
+        <button type="button" class="footer-link">{{ t('footer.rss') }}</button>
       </div>
     </footer>
   </div>
 </template>
+
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
+import { useUserStore } from '@/stores/useUser'
+
+const $q = useQuasar()
+const router = useRouter()
+const { t, locale } = useI18n()
+const userStore = useUserStore()
+
+/** 登出並回到首頁 */
+function logout() {
+  userStore.clearUser()
+  router.push({ name: 'home' })
+}
+
+/** 切換語言（繁中 ⇄ English） */
+function toggleLocale() {
+  locale.value = locale.value === 'zh-TW' ? 'en-US' : 'zh-TW'
+}
+
+/** 深色模式切換 */
+function toggleDark() {
+  $q.dark.toggle()
+}
+</script>
 
 <style scoped>
 .site {
@@ -107,6 +107,8 @@ function toggleDark() {
   display: flex;
   align-items: center;
   gap: 10px;
+  color: var(--paper);
+  text-decoration: none;
   cursor: pointer;
 }
 .brand-mark {
@@ -213,12 +215,17 @@ function toggleDark() {
   font-size: 13px;
   color: var(--ink-soft);
 }
-.site-footer a {
+.footer-link {
+  font-family: inherit;
+  font-size: inherit;
   color: var(--ink-soft);
-  text-decoration: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
   margin-left: 18px;
 }
-.site-footer a:hover {
+.footer-link:hover {
   color: var(--rust-deep);
 }
 

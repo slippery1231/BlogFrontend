@@ -51,10 +51,12 @@ import {useI18n} from 'vue-i18n'
 import AuthScene from '@/pages/Auth/components/AuthScene.vue'
 import GoogleAuthButton from '@/pages/Auth/components/GoogleAuthButton.vue'
 import {useAuth} from '@/pages/Auth/composables/useAuth'
+import {useAuthValidation} from '@/pages/Auth/composables/useAuthValidation'
 
 const router = useRouter()
 const {t} = useI18n()
 const {submitting, login} = useAuth()
+const {requiredError, emailError} = useAuthValidation()
 
 /** 表單欄位 */
 const form = reactive({
@@ -68,12 +70,10 @@ const errors = reactive({
   password: '',
 })
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
 /** 驗證表單，回傳是否通過 */
 function validate() {
-  errors.email = !form.email ? t('auth.errorRequired') : !EMAIL_PATTERN.test(form.email) ? t('auth.errorEmail') : ''
-  errors.password = !form.password ? t('auth.errorRequired') : ''
+  errors.email = emailError(form.email)
+  errors.password = requiredError(form.password)
   return !errors.email && !errors.password
 }
 

@@ -113,13 +113,12 @@ import { useI18n } from 'vue-i18n'
 import AuthScene from '@/pages/Auth/components/AuthScene.vue'
 import GoogleAuthButton from '@/pages/Auth/components/GoogleAuthButton.vue'
 import { useAuth } from '@/pages/Auth/composables/useAuth'
+import { useAuthValidation } from '@/pages/Auth/composables/useAuthValidation'
 
 const router = useRouter()
 const { t } = useI18n()
 const { submitting, sendingCode, register, sendVerificationEmail } = useAuth()
-
-/** 密碼最短長度 */
-const MIN_PASSWORD = 6
+const { requiredError, emailError, passwordError } = useAuthValidation()
 
 /** 驗證碼重新寄送冷卻秒數 */
 const COOLDOWN_SECONDS = 60
@@ -148,19 +147,13 @@ const errors = reactive({
 const cooldown = ref(0)
 let cooldownTimer: ReturnType<typeof setInterval> | undefined
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
 /** 驗證表單，回傳是否通過 */
 function validate() {
-  errors.lastName = !form.lastName ? t('auth.errorRequired') : ''
-  errors.firstName = !form.firstName ? t('auth.errorRequired') : ''
-  errors.email = !form.email ? t('auth.errorRequired') : !EMAIL_PATTERN.test(form.email) ? t('auth.errorEmail') : ''
-  errors.verificationCode = !form.verificationCode ? t('auth.errorRequired') : ''
-  errors.password = !form.password
-    ? t('auth.errorRequired')
-    : form.password.length < MIN_PASSWORD
-      ? t('auth.errorPasswordLength')
-      : ''
+  errors.lastName = requiredError(form.lastName)
+  errors.firstName = requiredError(form.firstName)
+  errors.email = emailError(form.email)
+  errors.verificationCode = requiredError(form.verificationCode)
+  errors.password = passwordError(form.password)
   errors.confirmPassword = form.confirmPassword !== form.password ? t('auth.errorConfirmMismatch') : ''
   return (
     !errors.lastName &&
@@ -185,7 +178,7 @@ function startCooldown() {
 
 /** 寄送註冊驗證碼 */
 async function onSendCode() {
-  errors.email = !form.email ? t('auth.errorRequired') : !EMAIL_PATTERN.test(form.email) ? t('auth.errorEmail') : ''
+  errors.email = emailError(form.email)
   if (errors.email || cooldown.value > 0) return
 
   const ok = await sendVerificationEmail(form.email)
