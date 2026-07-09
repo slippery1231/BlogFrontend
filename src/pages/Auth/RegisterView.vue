@@ -154,7 +154,7 @@ function validate() {
   errors.email = emailError(form.email)
   errors.verificationCode = requiredError(form.verificationCode)
   errors.password = passwordError(form.password)
-  errors.confirmPassword = form.confirmPassword !== form.password ? t('auth.errorConfirmMismatch') : ''
+  errors.confirmPassword = form.confirmPassword === form.password ? '' : t('auth.errorConfirmMismatch')
   return (
     !errors.lastName &&
     !errors.firstName &&
