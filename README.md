@@ -15,7 +15,7 @@
 | 日期 | dayjs |
 | 測試 | Vitest + happy-dom |
 | Lint / Format | ESLint + oxlint + oxfmt |
-| 部署 | Docker（多階段）+ Nginx |
+| 部署 | Vercel（靜態站點，SPA 路由由 `vercel.json` rewrite 處理） |
 
 ## 目錄結構
 
@@ -57,9 +57,6 @@ npm run test        # Vitest
 | `VITE_API_URL` | 後端 API 網域，例如 `http://localhost:5104` |
 | `VITE_LOG_LEVEL` | 有值時 axios logger 使用 `info`，否則 `warn` |
 
-## Docker 部署
+## 部署
 
-```bash
-docker compose -f docker-compose.development.yml -p blog-frontend up -d --build
-# 造訪 http://localhost:8080
-```
+部署於 Vercel：push 後由 Vercel 自動執行 `vite build` 並提供 `dist` 靜態檔案，SPA 路由重整由 `vercel.json` 的 rewrite 規則處理。
