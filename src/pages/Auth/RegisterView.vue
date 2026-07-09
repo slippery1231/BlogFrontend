@@ -1,30 +1,66 @@
 <template>
   <AuthScene :eyebrow="t('auth.eyebrowRegister')" :title="t('auth.registerTitle')" :subtitle="t('auth.registerSubtitle')">
     <form class="auth-form" novalidate @submit.prevent="onSubmit">
-      <div class="field" :class="{ 'has-error': errors.name }">
-        <label for="register-name">{{ t('auth.name') }}</label>
-        <input
-          id="register-name"
-          v-model.trim="form.name"
-          type="text"
-          autocomplete="nickname"
-          :placeholder="t('auth.namePlaceholder')"
-          @blur="validate"
-        />
-        <span v-if="errors.name" class="field-error">{{ errors.name }}</span>
+      <div class="field-row">
+        <div class="field" :class="{ 'has-error': errors.lastName }">
+          <label for="register-lastName">{{ t('auth.lastName') }}</label>
+          <input
+            id="register-lastName"
+            v-model.trim="form.lastName"
+            type="text"
+            autocomplete="family-name"
+            :placeholder="t('auth.lastNamePlaceholder')"
+            @blur="validate"
+          />
+          <span v-if="errors.lastName" class="field-error">{{ errors.lastName }}</span>
+        </div>
+
+        <div class="field" :class="{ 'has-error': errors.firstName }">
+          <label for="register-firstName">{{ t('auth.firstName') }}</label>
+          <input
+            id="register-firstName"
+            v-model.trim="form.firstName"
+            type="text"
+            autocomplete="given-name"
+            :placeholder="t('auth.firstNamePlaceholder')"
+            @blur="validate"
+          />
+          <span v-if="errors.firstName" class="field-error">{{ errors.firstName }}</span>
+        </div>
       </div>
 
       <div class="field" :class="{ 'has-error': errors.email }">
         <label for="register-email">{{ t('auth.email') }}</label>
+        <div class="input-with-action">
+          <input
+            id="register-email"
+            v-model.trim="form.email"
+            type="email"
+            autocomplete="email"
+            :placeholder="t('auth.emailPlaceholder')"
+            @blur="validate"
+          />
+          <button type="button" class="code-btn" :disabled="sendingCode || cooldown > 0" @click="onSendCode">
+            <q-spinner-dots v-if="sendingCode" color="white" size="16px" />
+            <span v-else-if="cooldown > 0">{{ t('auth.resendCodeIn', { seconds: cooldown }) }}</span>
+            <span v-else>{{ t('auth.getCode') }}</span>
+          </button>
+        </div>
+        <span v-if="errors.email" class="field-error">{{ errors.email }}</span>
+      </div>
+
+      <div class="field" :class="{ 'has-error': errors.verificationCode }">
+        <label for="register-code">{{ t('auth.verificationCode') }}</label>
         <input
-          id="register-email"
-          v-model.trim="form.email"
-          type="email"
-          autocomplete="email"
-          :placeholder="t('auth.emailPlaceholder')"
+          id="register-code"
+          v-model.trim="form.verificationCode"
+          type="text"
+          inputmode="numeric"
+          autocomplete="one-time-code"
+          :placeholder="t('auth.verificationCodePlaceholder')"
           @blur="validate"
         />
-        <span v-if="errors.email" class="field-error">{{ errors.email }}</span>
+        <span v-if="errors.verificationCode" class="field-error">{{ errors.verificationCode }}</span>
       </div>
 
       <div class="field" :class="{ 'has-error': errors.password }">
@@ -71,7 +107,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { onUnmounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import AuthScene from '@/pages/Auth/components/AuthScene.vue'
@@ -80,44 +116,142 @@ import { useAuth } from '@/pages/Auth/composables/useAuth'
 
 const router = useRouter()
 const { t } = useI18n()
-const { submitting, register } = useAuth()
+const { submitting, sendingCode, register, sendVerificationEmail } = useAuth()
 
 /** 密碼最短長度 */
 const MIN_PASSWORD = 6
 
+/** 驗證碼重新寄送冷卻秒數 */
+const COOLDOWN_SECONDS = 60
+
 /** 表單欄位 */
 const form = reactive({
-  name: '',
+  lastName: '',
+  firstName: '',
   email: '',
+  verificationCode: '',
   password: '',
   confirmPassword: '',
 })
 
 /** 各欄位錯誤訊息 */
 const errors = reactive({
-  name: '',
+  lastName: '',
+  firstName: '',
   email: '',
+  verificationCode: '',
   password: '',
   confirmPassword: '',
 })
+
+/** 驗證碼重新寄送剩餘秒數（0 表示可寄送） */
+const cooldown = ref(0)
+let cooldownTimer: ReturnType<typeof setInterval> | undefined
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 /** 驗證表單，回傳是否通過 */
 function validate() {
-  errors.name = !form.name ? t('auth.errorRequired') : ''
+  errors.lastName = !form.lastName ? t('auth.errorRequired') : ''
+  errors.firstName = !form.firstName ? t('auth.errorRequired') : ''
   errors.email = !form.email ? t('auth.errorRequired') : !EMAIL_PATTERN.test(form.email) ? t('auth.errorEmail') : ''
+  errors.verificationCode = !form.verificationCode ? t('auth.errorRequired') : ''
   errors.password = !form.password
     ? t('auth.errorRequired')
     : form.password.length < MIN_PASSWORD
       ? t('auth.errorPasswordLength')
       : ''
   errors.confirmPassword = form.confirmPassword !== form.password ? t('auth.errorPasswordMatch') : ''
-  return !errors.name && !errors.email && !errors.password && !errors.confirmPassword
+  return (
+    !errors.lastName &&
+    !errors.firstName &&
+    !errors.email &&
+    !errors.verificationCode &&
+    !errors.password &&
+    !errors.confirmPassword
+  )
+}
+
+/** 開始重新寄送冷卻倒數 */
+function startCooldown() {
+  cooldown.value = COOLDOWN_SECONDS
+  cooldownTimer = setInterval(() => {
+    cooldown.value -= 1
+    if (cooldown.value <= 0 && cooldownTimer) {
+      clearInterval(cooldownTimer)
+    }
+  }, 1000)
+}
+
+/** 寄送註冊驗證碼 */
+async function onSendCode() {
+  errors.email = !form.email ? t('auth.errorRequired') : !EMAIL_PATTERN.test(form.email) ? t('auth.errorEmail') : ''
+  if (errors.email || cooldown.value > 0) return
+
+  const ok = await sendVerificationEmail(form.email)
+  if (ok) startCooldown()
 }
 
 async function onSubmit() {
   if (!validate()) return
-  await register({ name: form.name, email: form.email, password: form.password })
+  await register({
+    lastName: form.lastName,
+    firstName: form.firstName,
+    emailPrimary: form.email,
+    password: form.password,
+    verificationCode: form.verificationCode,
+  })
 }
+
+onUnmounted(() => {
+  if (cooldownTimer) clearInterval(cooldownTimer)
+})
 </script>
+
+<style scoped>
+.field-row {
+  display: flex;
+  gap: 14px;
+}
+
+.field-row .field {
+  flex: 1;
+  min-width: 0;
+}
+
+.input-with-action {
+  display: flex;
+  gap: 8px;
+}
+
+.input-with-action input {
+  flex: 1;
+  min-width: 0;
+}
+
+.code-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--rust-deep);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 0 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.code-btn:hover:not(:disabled) {
+  border-color: var(--rust);
+}
+
+.code-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+</style>

@@ -1,9 +1,16 @@
 import { requestData } from '@/services/axiosService'
-import type { LoginRequest, RegisterRequest, GoogleLoginRequest, AuthResponse } from '@/pages/Auth/types'
+import type {
+  LoginRequest,
+  RegisterRequest,
+  GoogleLoginRequest,
+  AuthResponse,
+  SendVerificationEmailRequest,
+  SendVerificationEmailResponse,
+} from '@/pages/Auth/types'
 import type { CreatedResponse } from '@/services/axiosService'
 
-/** 身分驗證 API 路徑前綴 */
-const RESOURCE = '/api/auth'
+/** 呼叫路徑 */
+const BASE_API_URL = `/api/auth`
 
 // ==================== API ====================
 /**
@@ -12,7 +19,7 @@ const RESOURCE = '/api/auth'
  * @returns 含 accessToken 的驗證資料
  */
 export function login(payload: LoginRequest): Promise<AuthResponse> {
-  return requestData<AuthResponse>({ method: 'POST', url: `${RESOURCE}/login`, data: payload })
+  return requestData<AuthResponse>({ method: 'POST', url: `${BASE_API_URL}/login`, data: payload })
 }
 
 /**
@@ -21,7 +28,7 @@ export function login(payload: LoginRequest): Promise<AuthResponse> {
  * @returns 含 accessToken 的驗證資料
  */
 export function loginWithGoogle(payload: GoogleLoginRequest): Promise<AuthResponse> {
-  return requestData<AuthResponse>({ method: 'POST', url: `${RESOURCE}/google`, data: payload })
+  return requestData<AuthResponse>({ method: 'POST', url: `${BASE_API_URL}/google`, data: payload })
 }
 
 /**
@@ -29,5 +36,13 @@ export function loginWithGoogle(payload: GoogleLoginRequest): Promise<AuthRespon
  * @param payload 註冊資料
  */
 export function register(payload: RegisterRequest): Promise<CreatedResponse> {
-  return requestData<CreatedResponse>({ method: 'POST', url: `${RESOURCE}/register`, data: payload })
+  return requestData<CreatedResponse>({ method: 'POST', url: `${BASE_API_URL}/register`, data: payload })
+}
+
+/**
+ * 寄送註冊驗證碼郵件
+ * @param payload 收件電子信箱
+ */
+export function sendVerificationEmail(payload: SendVerificationEmailRequest): Promise<SendVerificationEmailResponse> {
+  return requestData<SendVerificationEmailResponse>({ method: 'POST', url: `${BASE_API_URL}/send-verification-email`, data: payload })
 }

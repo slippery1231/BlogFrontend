@@ -2,15 +2,15 @@ import { requestData } from '@/services/axiosService'
 import type { Post, PostCreateRequest, PostUpdateRequest } from '@/pages/Posts/types'
 import type { CreatedResponse, UpdatedResponse, DeletedResponse } from '@/services/axiosService'
 
-/** 文章 API 路徑前綴 */
-const RESOURCE = '/api/posts'
+/** 呼叫路徑 */
+const BASE_API_URL = `${import.meta.env.VITE_API_URL}/api/posts`
 
 /**
  * 取得文章列表
  * @returns 文章陣列
  */
 export function getPosts(): Promise<Post[]> {
-  return requestData<Post[]>({ method: 'GET', url: RESOURCE })
+  return requestData<Post[]>({ method: 'GET', url: BASE_API_URL })
 }
 
 /**
@@ -18,7 +18,7 @@ export function getPosts(): Promise<Post[]> {
  * @param id 文章編號
  */
 export function getPost(id: string | number): Promise<Post> {
-  return requestData<Post>({ method: 'GET', url: `${RESOURCE}/${id}` })
+  return requestData<Post>({ method: 'GET', url: `${BASE_API_URL}/${id}` })
 }
 
 /**
@@ -26,7 +26,7 @@ export function getPost(id: string | number): Promise<Post> {
  * @param payload 文章內容
  */
 export function createPost(payload: PostCreateRequest): Promise<CreatedResponse> {
-  return requestData<CreatedResponse>({ method: 'POST', url: RESOURCE, data: payload })
+  return requestData<CreatedResponse>({ method: 'POST', url: BASE_API_URL, data: payload })
 }
 
 /**
@@ -35,7 +35,7 @@ export function createPost(payload: PostCreateRequest): Promise<CreatedResponse>
  */
 export function updatePost(payload: PostUpdateRequest): Promise<UpdatedResponse> {
   const { id, ...data } = payload
-  return requestData<UpdatedResponse>({ method: 'PUT', url: `${RESOURCE}/${id}`, data })
+  return requestData<UpdatedResponse>({ method: 'PUT', url: `${BASE_API_URL}/${id}`, data })
 }
 
 /**
@@ -43,5 +43,5 @@ export function updatePost(payload: PostUpdateRequest): Promise<UpdatedResponse>
  * @param id 文章編號
  */
 export function deletePost(id: string | number): Promise<DeletedResponse> {
-  return requestData<DeletedResponse>({ method: 'DELETE', url: `${RESOURCE}/${id}` })
+  return requestData<DeletedResponse>({ method: 'DELETE', url: `${BASE_API_URL}/${id}` })
 }

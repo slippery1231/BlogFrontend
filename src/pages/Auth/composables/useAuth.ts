@@ -1,7 +1,12 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { login as loginApi, loginWithGoogle as loginWithGoogleApi, register as registerApi } from '@/services/auth/authService'
+import {
+  login as loginApi,
+  loginWithGoogle as loginWithGoogleApi,
+  register as registerApi,
+  sendVerificationEmail as sendVerificationEmailApi,
+} from '@/services/auth/authService'
 import type { LoginRequest, RegisterRequest } from '@/pages/Auth/types'
 import { useUserStore } from '@/stores/useUser'
 import { useNotify } from '@/composables/useNotify'
@@ -21,6 +26,9 @@ export function useAuth() {
 
   /** 送出中狀態（用於停用按鈕、顯示 spinner） */
   const submitting = ref(false)
+
+  /** 驗證碼寄送中狀態 */
+  const sendingCode = ref(false)
 
   /** 判斷是否為「後端未連線」的網路錯誤（status 0） */
   function isNetworkError(err: unknown) {
@@ -78,6 +86,27 @@ export function useAuth() {
     }
   }
 
+  /** 寄送註冊驗證碼郵件，回傳是否寄送成功 */
+  async function sendVerificationEmail(email: string) {
+    sendingCode.value = true
+    try {
+      await sendVerificationEmailApi({ email })
+      notifySuccess(t('auth.codeSentSuccess'))
+      return true
+    } catch (err) {
+      if (import.meta.env.DEV && isNetworkError(err)) {
+        logger.warn('API 無法連線，開發模式模擬寄送驗證碼以利預覽')
+        notifySuccess(t('auth.codeSentSuccess'))
+        return true
+      }
+      logger.error('寄送驗證碼失敗:', err)
+      notifyError(toMessage(err, t('auth.codeSentFailed')))
+      return false
+    } finally {
+      sendingCode.value = false
+    }
+  }
+
   /** 註冊，成功後導向登入頁 */
   async function register(payload: RegisterRequest) {
     submitting.value = true
@@ -99,5 +128,5 @@ export function useAuth() {
     }
   }
 
-  return { submitting, login, loginWithGoogle, register }
+  return { submitting, sendingCode, login, loginWithGoogle, register, sendVerificationEmail }
 }

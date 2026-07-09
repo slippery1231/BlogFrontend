@@ -79,7 +79,7 @@ function validate() {
 
 async function onSubmit() {
   if (!validate()) return
-  await login({email: form.email, password: form.password})
+  await login({account: form.email, password: form.password})
 }
 </script>
 
