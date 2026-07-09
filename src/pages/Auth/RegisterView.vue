@@ -161,7 +161,7 @@ function validate() {
     : form.password.length < MIN_PASSWORD
       ? t('auth.errorPasswordLength')
       : ''
-  errors.confirmPassword = form.confirmPassword !== form.password ? t('auth.errorPasswordMatch') : ''
+  errors.confirmPassword = form.confirmPassword !== form.password ? t('auth.errorConfirmMismatch') : ''
   return (
     !errors.lastName &&
     !errors.firstName &&

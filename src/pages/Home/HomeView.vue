@@ -85,7 +85,8 @@
           <p>{{ t('home.subscribeDesc') }}</p>
         </div>
         <form class="subscribe-form" @submit.prevent>
-          <input type="text" :placeholder="t('home.subscribePlaceholder')" />
+          <label class="visually-hidden" for="subscribe-email">{{ t('home.subscribeEmailLabel') }}</label>
+          <input id="subscribe-email" type="text" :placeholder="t('home.subscribePlaceholder')" />
           <button type="submit">{{ t('home.subscribe') }}</button>
         </form>
       </div>
@@ -356,6 +357,15 @@ onMounted(load)
   display: flex;
   gap: 10px;
   flex-shrink: 0;
+}
+/* 僅供螢幕閱讀器使用的隱藏標籤 */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 .subscribe-form input {
   font-family: var(--font-mono);

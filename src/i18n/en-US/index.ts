@@ -26,6 +26,7 @@ export default {
     popularTags: 'Popular Tags',
     subscribeTitle: 'Subscribe to Intertidal',
     subscribeDesc: 'One letter a week, no more no less, straight to your inbox.',
+    subscribeEmailLabel: 'Email address',
     subscribePlaceholder: "you{'@'}example.com",
     subscribe: 'Subscribe',
   },
@@ -82,7 +83,7 @@ export default {
     errorRequired: 'This field is required',
     errorEmail: 'Please enter a valid account address',
     errorPasswordLength: 'Password must be at least 6 characters',
-    errorPasswordMatch: 'Passwords do not match',
+    errorConfirmMismatch: 'Passwords do not match',
   },
   message: {
     failed: 'Action failed',

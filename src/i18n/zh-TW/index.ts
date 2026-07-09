@@ -26,6 +26,7 @@ export default {
     popularTags: '熱門標籤',
     subscribeTitle: '訂閱潮間帶',
     subscribeDesc: '每週一封，不多不少，寄到你的信箱。',
+    subscribeEmailLabel: '電子信箱',
     subscribePlaceholder: "you{'@'}example.com",
     subscribe: '訂閱',
   },
@@ -82,7 +83,7 @@ export default {
     errorRequired: '此欄位為必填',
     errorEmail: '請輸入有效的電子信箱',
     errorPasswordLength: '密碼至少需 6 個字元',
-    errorPasswordMatch: '兩次輸入的密碼不一致',
+    errorConfirmMismatch: '兩次輸入的密碼不一致',
   },
   message: {
     failed: '操作失敗',
