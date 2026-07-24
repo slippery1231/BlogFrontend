@@ -35,34 +35,41 @@
         </template>
 
         <div class="announcement-content q-editor-content" v-html="announcement.content" />
-        <div v-if="announcement.attachmentsLoading" class="row justify-center q-mb-lg">
+        <div v-if="announcement.attachmentsLoading" class="attachment-loading">
           <q-spinner-dots color="primary" size="24px" />
         </div>
-        <div v-else-if="announcement.attachments?.length" class="q-mb-lg">
-          <h3 class="text-subtitle1 text-weight-medium q-mb-sm">附件下載</h3>
-          <q-list bordered separator>
-            <q-item v-for="attachment in announcement.attachments" :key="attachment.currentFileName" :href="attachment.url" target="_blank" clickable>
+        <div v-else-if="announcement.attachments?.length" class="attachment-block">
+          <h3 class="attachment-title">附件下載</h3>
+          <q-list class="attachment-list">
+            <q-item
+              v-for="attachment in announcement.attachments"
+              :key="attachment.currentFileName"
+              :href="attachment.url"
+              target="_blank"
+              clickable
+              class="attachment-row"
+            >
               <!-- 圖片給縮圖預覽，其他型別給檔案 icon -->
               <q-item-section avatar>
                 <q-img
                   v-if="isImageType(attachment.contentType)"
                   :src="attachment.url"
                   :alt="attachment.displayFileName || 'image'"
-                  width="48px"
-                  height="48px"
+                  width="44px"
+                  height="44px"
                   fit="cover"
-                  class="rounded-borders"
+                  class="attachment-thumb"
                 />
-                <q-icon v-else :name="fileIcon(attachment.contentType)" color="grey-7" size="40px" />
+                <q-icon v-else :name="fileIcon(attachment.contentType)" class="attachment-file-icon" size="32px" />
               </q-item-section>
 
               <q-item-section>
-                <q-item-label lines="1">{{ attachment.displayFileName || attachment.originalFileName }}</q-item-label>
-                <q-item-label caption>{{ formatFileSize(attachment.fileSize) }}</q-item-label>
+                <q-item-label lines="1" class="attachment-name">{{ attachment.displayFileName || attachment.originalFileName }}</q-item-label>
+                <q-item-label caption class="attachment-size">{{ formatFileSize(attachment.fileSize) }}</q-item-label>
               </q-item-section>
 
               <q-item-section side>
-                <q-icon name="mdi-download" color="primary" />
+                <q-icon name="mdi-download" class="attachment-download-icon" />
               </q-item-section>
             </q-item>
           </q-list>
@@ -279,6 +286,68 @@ onMounted(async () => {
 .q-editor-content :deep(p) {
   margin: 0;
   padding: 0;
+}
+
+.attachment-loading {
+  display: flex;
+  justify-content: center;
+  margin: 8px 18px 18px;
+}
+
+.attachment-block {
+  margin: 0 18px 18px;
+}
+
+.attachment-title {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--rust-deep);
+  margin: 0 0 10px;
+}
+
+.attachment-list {
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.attachment-row:not(:last-child) {
+  border-bottom: 1px solid var(--line);
+}
+
+.attachment-row {
+  transition: background-color 0.15s ease;
+}
+
+.attachment-row:hover {
+  background: var(--paper);
+}
+
+.attachment-thumb {
+  border-radius: 3px;
+  border: 1px solid var(--line);
+}
+
+.attachment-file-icon {
+  color: var(--ink-soft);
+}
+
+.attachment-name {
+  font-family: var(--font-sans);
+  color: var(--ink);
+}
+
+.attachment-size {
+  font-family: var(--font-mono);
+  color: var(--ink-soft) !important;
+}
+
+.attachment-download-icon {
+  color: var(--rust);
 }
 
 @media (max-width: 720px) {
