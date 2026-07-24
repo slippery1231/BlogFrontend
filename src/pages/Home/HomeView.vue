@@ -3,7 +3,7 @@
     <!-- 期數 / 標語 -->
     <div class="issue-row">
       <div>
-        <div class="eyebrow">{{ t('home.issue') }} · 2026 年 7 月</div>
+        <div class="eyebrow">{{ t('home.issue') }} · 2026/07 </div>
         <div class="tagline">{{ t('app.tagline') }}</div>
       </div>
     </div>

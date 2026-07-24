@@ -34,6 +34,8 @@ export default {
   },
   announcement: {
     noAnnouncement: '目前沒有公告',
+    announcementList:'公告欄',
+    attachments:'附件'
   },
   footer: {
     rights: '潮間帶 Field Notes © 2026',

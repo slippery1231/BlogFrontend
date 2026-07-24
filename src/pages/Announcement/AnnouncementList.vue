@@ -4,7 +4,7 @@
       <div class="eyebrow">ANNOUNCEMENT</div>
       <div class="page-title">
         <q-icon name="mdi-bullhorn" class="title-icon" />
-        公告欄
+        {{t('announcement.announcementList')}}
       </div>
     </div>
 
@@ -39,7 +39,7 @@
           <q-spinner-dots color="primary" size="24px" />
         </div>
         <div v-else-if="announcement.attachments?.length" class="attachment-block">
-          <h3 class="attachment-title">附件下載</h3>
+          <h3 class="attachment-title">{{t('announcement.attachments')}}</h3>
           <q-list class="attachment-list">
             <q-item
               v-for="attachment in announcement.attachments"

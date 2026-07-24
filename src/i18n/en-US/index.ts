@@ -6,7 +6,7 @@ export default {
   },
   nav: {
     home: 'Home',
-    announcement: 'Announcement',
+    announcement: 'Announcements',
     posts: 'Posts',
     about: 'About',
   },
@@ -34,6 +34,8 @@ export default {
   },
   announcement: {
     noAnnouncement: 'No announcement',
+    announcementList:'Announcements',
+    attachments:'Attachments'
   },
   footer: {
     rights: 'Intertidal Field Notes © 2026',
