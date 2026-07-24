@@ -6,12 +6,12 @@ export default {
   },
   nav: {
     home: 'Home',
+    announcement: 'Announcement',
     posts: 'Posts',
     about: 'About',
   },
   actions: {
     search: 'Search',
-    subscribeNewsletter: 'Subscribe',
   },
   common: {
     loading: 'Loading...',
@@ -24,11 +24,6 @@ export default {
     issue: 'Issue 042',
     latest: 'Latest Posts',
     popularTags: 'Popular Tags',
-    subscribeTitle: 'Subscribe to Intertidal',
-    subscribeDesc: 'One letter a week, no more no less, straight to your inbox.',
-    subscribeEmailLabel: 'Email address',
-    subscribePlaceholder: "you{'@'}example.com",
-    subscribe: 'Subscribe',
   },
   post: {
     listTitle: 'All Posts',
@@ -36,6 +31,9 @@ export default {
     notFound: 'Post not found',
     min: 'min',
     minRead: 'min read',
+  },
+  announcement: {
+    noAnnouncement: 'No announcement',
   },
   footer: {
     rights: 'Intertidal Field Notes © 2026',

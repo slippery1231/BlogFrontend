@@ -6,12 +6,12 @@ export default {
   },
   nav: {
     home: '首頁',
+    announcement: '公告',
     posts: '文章',
     about: '關於',
   },
   actions: {
     search: '搜尋',
-    subscribeNewsletter: '訂閱電子報',
   },
   common: {
     loading: '載入中...',
@@ -24,11 +24,6 @@ export default {
     issue: '第 042 期',
     latest: '最新文章',
     popularTags: '熱門標籤',
-    subscribeTitle: '訂閱潮間帶',
-    subscribeDesc: '每週一封，不多不少，寄到你的信箱。',
-    subscribeEmailLabel: '電子信箱',
-    subscribePlaceholder: "you{'@'}example.com",
-    subscribe: '訂閱',
   },
   post: {
     listTitle: '所有文章',
@@ -36,6 +31,9 @@ export default {
     notFound: '找不到這篇文章',
     min: '分鐘',
     minRead: '分鐘閱讀',
+  },
+  announcement: {
+    noAnnouncement: '目前沒有公告',
   },
   footer: {
     rights: '潮間帶 Field Notes © 2026',

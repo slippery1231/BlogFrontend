@@ -4,8 +4,8 @@
     <aside class="brand-panel">
       <div class="brand" @click="router.push({ name: 'home' })">
         <svg class="brand-mark" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-          <path d="M1 11 Q6 4 11 11 T21 11" stroke="var(--paper)" stroke-width="1.6"/>
-          <path d="M1 16 Q6 9 11 16 T21 16" stroke="var(--rust)" stroke-width="1.6"/>
+          <path d="M1 11 Q6 4 11 11 T21 11" stroke="var(--paper)" stroke-width="1.6" />
+          <path d="M1 16 Q6 9 11 16 T21 16" stroke="var(--rust)" stroke-width="1.6" />
         </svg>
         <span class="brand-name">{{ t('app.title') }}</span>
       </div>
@@ -16,8 +16,8 @@
       </div>
 
       <svg class="brand-waves" viewBox="0 0 400 120" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M0 70 Q50 45 100 70 T200 70 T300 70 T400 70 V120 H0 Z" fill="var(--indigo-deep)" opacity="0.6"/>
-        <path d="M0 92 Q60 68 120 92 T240 92 T360 92 T400 90 V120 H0 Z" fill="var(--indigo-deep)"/>
+        <path d="M0 70 Q50 45 100 70 T200 70 T300 70 T400 70 V120 H0 Z" fill="var(--indigo-deep)" opacity="0.6" />
+        <path d="M0 92 Q60 68 120 92 T240 92 T360 92 T400 90 V120 H0 Z" fill="var(--indigo-deep)" />
       </svg>
     </aside>
 
@@ -28,10 +28,10 @@
         <h1 class="auth-title">{{ title }}</h1>
         <p class="auth-subtitle">{{ subtitle }}</p>
 
-        <slot/>
+        <slot />
 
         <div class="auth-alt">
-          <slot name="alt"/>
+          <slot name="alt" />
         </div>
 
         <button class="back-home" type="button" @click="router.push({ name: 'home' })">
@@ -43,8 +43,8 @@
 </template>
 
 <script setup lang="ts">
-import {useRouter} from 'vue-router'
-import {useI18n} from 'vue-i18n'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 defineProps<{
   /** 頂部小標（mono、大寫） */
@@ -56,9 +56,8 @@ defineProps<{
 }>()
 
 const router = useRouter()
-const {t} = useI18n()
+const { t } = useI18n()
 </script>
-
 
 <style scoped>
 .auth-scene {
@@ -225,8 +224,9 @@ const {t} = useI18n()
   border-radius: 3px;
   padding: 12px 14px;
   outline: none;
-  transition: border-color 0.15s ease,
-  box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 :deep(.field input::placeholder) {
@@ -265,8 +265,9 @@ const {t} = useI18n()
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: background-color 0.15s ease,
-  transform 0.1s ease;
+  transition:
+    background-color 0.15s ease,
+    transform 0.1s ease;
 }
 
 :deep(.auth-btn:hover:not(:disabled)) {

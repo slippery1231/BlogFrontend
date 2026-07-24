@@ -1,6 +1,7 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { postRoutes } from '@/router/post.routes'
 import { authRoutes } from '@/router/auth.routes'
+import { announcementRoutes } from '@/router/announcement.route.ts'
 
 /**
  * 路由配置主檔案
@@ -21,6 +22,7 @@ export const featureRoutes: RouteRecordRaw[] = [
     component: () => import('@/pages/Home/HomeView.vue'),
   },
   ...postRoutes,
+  ...announcementRoutes,
 ]
 
 /** Catch All 路由必須單獨定義並放在最後 */

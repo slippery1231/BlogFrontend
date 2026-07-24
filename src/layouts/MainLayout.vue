@@ -11,6 +11,7 @@
 
       <nav class="nav-links">
         <router-link :to="{ name: 'home' }" active-class="active" exact>{{ t('nav.home') }}</router-link>
+        <router-link :to="{ name: 'announcement' }" active-class="active" exact>{{ t('nav.announcement') }}</router-link>
         <router-link :to="{ name: 'postList' }" active-class="active">{{ t('nav.posts') }}</router-link>
       </nav>
 
@@ -39,7 +40,6 @@
         <button v-else class="auth-nav-btn" @click="router.push({ name: 'login' })">
           {{ t('auth.login') }}
         </button>
-        <button class="subscribe-btn">{{ t('actions.subscribeNewsletter') }}</button>
       </div>
     </header>
 
@@ -185,18 +185,6 @@ function toggleDark() {
 }
 .auth-nav-btn:hover {
   background: rgba(242, 239, 230, 0.12);
-}
-.subscribe-btn {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--indigo-deep);
-  background: var(--paper);
-  border: none;
-  padding: 9px 18px;
-  border-radius: 2px;
-  cursor: pointer;
-  letter-spacing: 0.5px;
 }
 
 /* ---------- 頁尾 ---------- */

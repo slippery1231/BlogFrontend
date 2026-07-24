@@ -1,4 +1,5 @@
 import type { ResponseStructure } from '@/services/axiosService'
+import type { QTableColumn } from 'quasar'
 
 declare global {
   /**
@@ -12,6 +13,8 @@ declare global {
    * }
    */
   type ErrorResponseStructure = ResponseStructure<null>
+  type XTableColumn = QTableColumn
+  type XPagination = Pagination
 }
 
 export {}

@@ -77,19 +77,8 @@
           <span v-for="tag in popularTags" :key="tag" class="tag-outline">{{ tag }}</span>
         </div>
       </div>
-
-      <!-- 訂閱區塊 -->
-      <div class="subscribe-card">
-        <div class="subscribe-text">
-          <h3>{{ t('home.subscribeTitle') }}</h3>
-          <p>{{ t('home.subscribeDesc') }}</p>
-        </div>
-        <form class="subscribe-form" @submit.prevent>
-          <label class="visually-hidden" for="subscribe-email">{{ t('home.subscribeEmailLabel') }}</label>
-          <input id="subscribe-email" type="text" :placeholder="t('home.subscribePlaceholder')" />
-          <button type="submit">{{ t('home.subscribe') }}</button>
-        </form>
-      </div>
+      <!--熱門文章-->
+      <!--      todo 熱門文章-->
     </template>
   </main>
 </template>
@@ -330,65 +319,6 @@ onMounted(load)
   color: var(--ink-soft);
 }
 
-.subscribe-card {
-  border: 1px dashed var(--rust-deep);
-  border-radius: 3px;
-  padding: 32px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 24px;
-  background: var(--paper-deep);
-  margin-bottom: 8px;
-}
-.subscribe-text h3 {
-  font-family: var(--font-serif);
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 6px;
-  color: var(--ink);
-}
-.subscribe-text p {
-  font-family: var(--font-reading);
-  font-size: 14px;
-  color: var(--ink-soft);
-}
-.subscribe-form {
-  display: flex;
-  gap: 10px;
-  flex-shrink: 0;
-}
-/* 僅供螢幕閱讀器使用的隱藏標籤 */
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
-.subscribe-form input {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  padding: 11px 14px;
-  border: 1px solid var(--line);
-  border-radius: 2px;
-  background: var(--card);
-  width: 220px;
-  color: var(--ink);
-}
-.subscribe-form button {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 600;
-  color: #fff;
-  background: var(--rust-deep);
-  border: none;
-  padding: 11px 18px;
-  border-radius: 2px;
-  cursor: pointer;
-}
-
 @media (max-width: 820px) {
   .featured {
     flex-direction: column;
@@ -400,17 +330,6 @@ onMounted(load)
   }
   .featured-title {
     font-size: 30px;
-  }
-  .subscribe-card {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .subscribe-form {
-    width: 100%;
-  }
-  .subscribe-form input {
-    flex: 1;
-    width: auto;
   }
 }
 </style>

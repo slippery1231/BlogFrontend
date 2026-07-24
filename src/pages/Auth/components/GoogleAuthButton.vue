@@ -1,13 +1,15 @@
 <template>
   <div class="google-auth" :class="{ 'is-submitting': submitting }">
-    <div class="auth-divider"><span>{{ t('auth.or') }}</span></div>
+    <div class="auth-divider">
+      <span>{{ t('auth.or') }}</span>
+    </div>
 
     <!--
       Google 官方渲染按鈕：不可放 slot 自訂按鈕。
       套件在有 slot 時會改走 popup（授權碼 / access_token）流程，callback 不會有 credential（id_token）；
       只有官方渲染按鈕才回傳 credential，後端 /api/auth/google 依賴此欄位驗證。
     -->
-    <GoogleLogin :callback="onSuccess" :error="onError" :button-config="buttonConfig"/>
+    <GoogleLogin :callback="onSuccess" :error="onError" :button-config="buttonConfig" />
   </div>
 </template>
 

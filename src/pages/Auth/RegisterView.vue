@@ -32,14 +32,7 @@
       <div class="field" :class="{ 'has-error': errors.email }">
         <label for="register-email">{{ t('auth.email') }}</label>
         <div class="input-with-action">
-          <input
-            id="register-email"
-            v-model.trim="form.email"
-            type="email"
-            autocomplete="email"
-            :placeholder="t('auth.emailPlaceholder')"
-            @blur="validate"
-          />
+          <input id="register-email" v-model.trim="form.email" type="email" autocomplete="email" :placeholder="t('auth.emailPlaceholder')" @blur="validate" />
           <button type="button" class="code-btn" :disabled="sendingCode || cooldown > 0" @click="onSendCode">
             <q-spinner-dots v-if="sendingCode" color="white" size="16px" />
             <span v-else-if="cooldown > 0">{{ t('auth.resendCodeIn', { seconds: cooldown }) }}</span>
@@ -155,14 +148,7 @@ function validate() {
   errors.verificationCode = requiredError(form.verificationCode)
   errors.password = passwordError(form.password)
   errors.confirmPassword = form.confirmPassword === form.password ? '' : t('auth.errorConfirmMismatch')
-  return (
-    !errors.lastName &&
-    !errors.firstName &&
-    !errors.email &&
-    !errors.verificationCode &&
-    !errors.password &&
-    !errors.confirmPassword
-  )
+  return !errors.lastName && !errors.firstName && !errors.email && !errors.verificationCode && !errors.password && !errors.confirmPassword
 }
 
 /** 開始重新寄送冷卻倒數 */
